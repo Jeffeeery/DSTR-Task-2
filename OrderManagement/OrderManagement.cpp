@@ -7,10 +7,12 @@
 
 #include "OrderManagement.hpp"
 
+using namespace std;
+
 // ---------------------------------------------------------------
 // Order constructor
 // ---------------------------------------------------------------
-Order::Order(int id, std::string item) {
+Order::Order(int id, string item) {
     // TODO: Initialize orderId = id, itemName = item
     // TODO: Set status = "pending", next = nullptr
 }
@@ -34,7 +36,7 @@ OrderQueue::~OrderQueue() {
 // ---------------------------------------------------------------
 // enqueue — add new order to rear of queue
 // ---------------------------------------------------------------
-void OrderQueue::enqueue(int orderId, std::string itemName) {
+void OrderQueue::enqueue(int orderId, string itemName) {
     // TODO: Create new Order node
     // TODO: If queue empty (front == nullptr): set front = rear = new node
     // TODO: Otherwise: rear->next = new node, then rear = new node

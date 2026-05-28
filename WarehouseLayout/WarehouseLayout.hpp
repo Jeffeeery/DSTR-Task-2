@@ -28,10 +28,12 @@
 
 #define INITIAL_CAPACITY 4  // initial children array size; doubles when full
 
+using namespace std;
+
 // Represents one location in the warehouse hierarchy (tree node)
 struct LocationNode {
-    std::string name;           // e.g., "Zone-A", "Aisle-1", "Shelf-3"
-    std::string type;           // "warehouse", "zone", "aisle", "shelf"
+    string name;           // e.g., "Zone-A", "Aisle-1", "Shelf-3"
+    string type;           // "warehouse", "zone", "aisle", "shelf"
     LocationNode** children;    // dynamic array of child pointers
     int childCount;
     int childCapacity;

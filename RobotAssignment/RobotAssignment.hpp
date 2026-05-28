@@ -23,10 +23,12 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 // Represents a single robot (circular linked-list node)
 struct Robot {
     int robotId;
-    std::string status;     // "available", "busy", or "maintenance"
+    string status;     // "available", "busy", or "maintenance"
     int tasksAssigned;      // total tasks assigned to this robot
     Robot* next;            // last robot's next points back to first
 
