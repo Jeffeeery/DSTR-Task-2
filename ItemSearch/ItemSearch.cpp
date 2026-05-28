@@ -7,6 +7,8 @@
 
 #include "ItemSearch.hpp"
 
+using namespace std;
+
 ItemNode::ItemNode(int id, std::string name, std::string loc) {
     // TODO: Initialize itemId, itemName, location, left = nullptr, right = nullptr
 }

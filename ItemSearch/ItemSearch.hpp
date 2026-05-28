@@ -22,15 +22,17 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 // Represents a warehouse item stored as a BST node
 struct ItemNode {
     int itemId;             // unique ID — BST is ordered by this
-    std::string itemName;
-    std::string location;   // e.g., "Zone-A/Aisle-2/Shelf-3"
+    string itemName;
+    string location;   // e.g., "Zone-A/Aisle-2/Shelf-3"
     ItemNode* left;         // left child  (smaller ID)
     ItemNode* right;        // right child (larger ID)
 
-    ItemNode(int id, std::string name, std::string loc);
+    ItemNode(int id, string name, string loc);
 };
 
 // Self-implemented BST — DO NOT use STL containers
@@ -39,23 +41,23 @@ private:
     ItemNode* root;
 
     // Private recursive helpers
-    ItemNode* insertHelper(ItemNode* node, int id, std::string name, std::string loc);
+    ItemNode* insertHelper(ItemNode* node, int id, string name, string loc);
     ItemNode* searchHelper(ItemNode* node, int id) const;
     ItemNode* deleteHelper(ItemNode* node, int id);
     ItemNode* findMin(ItemNode* node) const;
     void inOrderHelper(ItemNode* node) const;
-    ItemNode* searchByNameHelper(ItemNode* node, std::string name) const;
+    ItemNode* searchByNameHelper(ItemNode* node, string name) const;
     void destroyTree(ItemNode* node);
 
 public:
     ItemBST();
     ~ItemBST();
 
-    void insert(int itemId, std::string itemName, std::string location);
+    void insert(int itemId, string itemName, string location);
     ItemNode* searchById(int itemId) const;              // O(log n)
-    ItemNode* searchByName(std::string itemName) const;  // O(n) linear scan
+    ItemNode* searchByName(string itemName) const;  // O(n) linear scan
     void deleteItem(int itemId);
-    void updateLocation(int itemId, std::string newLocation);
+    void updateLocation(int itemId, string newLocation);
     void displayAll() const; // in-order: sorted by ID
 
     // TODO: Add any additional helper methods
