@@ -6,10 +6,9 @@
  *   1. OrderManagement    (Queue)          — Task 1
  *   2. RobotAssignment    (Circular Queue) — Task 2
  *   3. RobotNavigation    (Stack)          — Task 3
- *   4. ItemSearch         (BST)            — Task 4 (Optional)
- *   5. WarehouseLayout    (Tree)           — Task 5 (Optional)
+ *   4. ItemSearch         (BST)            — Task 4
+ *   5. WarehouseLayout    (Tree)           — Task 5
  *
- * All team members contribute to this single prototype.
  */
 
 #include <iostream>
@@ -19,10 +18,12 @@
 #include "ItemSearch/ItemSearch.hpp"
 #include "WarehouseLayout/WarehouseLayout.hpp"
 
+using namespace std;
+
 int main() {
-    std::cout << "========================================" << std::endl;
-    std::cout << "  Warehouse Robot Navigation System     " << std::endl;
-    std::cout << "========================================" << std::endl;
+    cout << "========================================" << endl;
+    cout << "  Warehouse Robot Navigation System     " << endl;
+    cout << "========================================" << endl;
 
     // ----------------------------------------------------------
     // STEP 1: Initialize warehouse layout (Task 5)
@@ -65,25 +66,26 @@ int main() {
     // ----------------------------------------------------------
     // STEP 7: Navigate robot — push each step onto stack (Task 3)
     // ----------------------------------------------------------
-    // TODO: Create PathStack
-    // TODO: Push movement steps matching the generated route
-    //       e.g., push("forward", "Zone-A"), push("left", "Aisle-2"), ...
-    // TODO: Display forward path with displayForwardPath()
+    PathStack robotPath;
+    robotPath.push("forward", "Zone-A");
+    robotPath.push("left",    "Aisle-2");
+    robotPath.push("forward", "Shelf-3");
+    robotPath.displayForwardPath();
 
     // ----------------------------------------------------------
     // STEP 8: Robot completes task — return via reverse path (Task 3)
     // ----------------------------------------------------------
-    // TODO: Call PathStack::returnPath() to simulate return journey
-    // TODO: Mark assigned robot as available: markAvailable(robotId)
+    robotPath.returnPath();
+    // markAvailable(robotId) — handled by Task 2 member
 
     // ----------------------------------------------------------
     // STEP 9: Mark order as completed (Task 1)
     // ----------------------------------------------------------
     // TODO: Display completed order history with displayCompleted()
 
-    std::cout << "\n========================================" << std::endl;
-    std::cout << "  System simulation complete.           " << std::endl;
-    std::cout << "========================================" << std::endl;
+    cout << "\n========================================" << endl;
+    cout << "  System simulation complete.           " << endl;
+    cout << "========================================" << endl;
 
     return 0;
 }

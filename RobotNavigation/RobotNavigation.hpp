@@ -23,13 +23,15 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 // Represents a single movement step (stack node)
 struct Step {
-    std::string direction;  // "forward", "left", "right", "backward"
-    std::string location;   // label of location reached after this step
+    string direction;  // "forward", "left", "right", "backward"
+    string location;   // label of location reached after this step
     Step* next;             // pointer to the step below in the stack
 
-    Step(std::string dir, std::string loc);
+    Step(string dir, string loc);
 };
 
 // Self-implemented Stack — DO NOT use STL <stack> or any built-in container
@@ -43,7 +45,7 @@ public:
     ~PathStack();
 
     // Push a new movement step (record one move forward)
-    void push(std::string direction, std::string location);
+    void push(string direction, string location);
 
     // Pop and return top step (retrace path); returns nullptr if empty
     Step* pop();
@@ -62,7 +64,7 @@ public:
     void backtrack();
 
     // Returns the opposite direction: "forward"<->"backward", "left"<->"right"
-    std::string reverseDirection(std::string dir) const;
+    string reverseDirection(string dir) const;
 
     // TODO: Add any additional helper methods
 };
