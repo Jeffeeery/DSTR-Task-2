@@ -1,7 +1,7 @@
 /*
  * Task 1 — Order Management Module
- * Member: [Your Name]
- * Student ID: [Your ID]
+ * Member: LAI KAH FON
+ * Student ID: TP077207
  * Data Structure: Queue (self-implemented, FIFO — linked-list based)
  *
  * Responsibility:
