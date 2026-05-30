@@ -1,121 +1,100 @@
-/*
- * Task 3 — Robot Navigation & Path Tracking Implementation
- * Member: [Your Name]
- * Student ID: [Your ID]
- * Data Structure: Stack (self-implemented, LIFO)
- */
+// Task 3 — Robot Navigation & Path Tracking Implementation
 
 #include "RobotNavigation.hpp"
 
 using namespace std;
 
-// ---------------------------------------------------------------
-// Step constructor
-// ---------------------------------------------------------------
-Step::Step(string dir, string loc) {
-    direction = dir;
-    location  = loc;
-    next      = nullptr;
-}
-
-// ---------------------------------------------------------------
 // PathStack constructor
-// ---------------------------------------------------------------
 PathStack::PathStack() {
     top  = nullptr;
     size = 0;
 }
 
-// ---------------------------------------------------------------
-// PathStack destructor — free all step nodes
-// ---------------------------------------------------------------
+// PathStack destructor — free all nodes individually (linked-list standard)
 PathStack::~PathStack() {
     while (!isEmpty()) {
-        Step* temp = pop();
-        delete temp;
+        pop();  // pop() handles deletion internally
     }
 }
 
-// ---------------------------------------------------------------
-// push — record one movement step
-// ---------------------------------------------------------------
+// push — record one movement step and link at head
 void PathStack::push(string direction, string location) {
-    Step* newStep = new Step(direction, location);
-    newStep->next = top;   // link new step above current top
+    Step* newStep      = new Step;
+    newStep->direction = direction;
+    newStep->location  = location;
+    newStep->next      = top;
+
     top = newStep;
     size++;
-    cout << "Robot moved " << direction << " -> " << location << endl;
+    cout << "Robot moved " << direction << " -> " << location << " [pushed into stack]" << endl;
 }
 
-// ---------------------------------------------------------------
-// pop — remove and return top step (caller must delete)
-// ---------------------------------------------------------------
-Step* PathStack::pop() {
+// pop — underflow check, then delete top node internally
+void PathStack::pop() {
     if (isEmpty()) {
-        cout << "Error: No steps to pop — path is empty." << endl;
-        return nullptr;
+        cout << "Stack Underflow. Cannot pop." << endl;
+        return;
     }
-    Step* saved = top;
+    Step* temp = top;
+    cout << temp->direction << " step from " << temp->location << " popped from stack." << endl;
+
     top = top->next;
-    saved->next = nullptr;
+    delete temp;
     size--;
-    return saved;
 }
 
-// ---------------------------------------------------------------
-// peek — view top step without removing
-// ---------------------------------------------------------------
+// peek — read top without removing
 Step* PathStack::peek() const {
     return top;
 }
 
-// ---------------------------------------------------------------
 // isEmpty
-// ---------------------------------------------------------------
 bool PathStack::isEmpty() const {
     return top == nullptr;
 }
 
-// ---------------------------------------------------------------
 // getSize
-// ---------------------------------------------------------------
 int PathStack::getSize() const {
     return size;
 }
 
-// ---------------------------------------------------------------
-// displayForwardPath — print path in forward order (first step first)
-// Stack top = last step pushed, so collect into raw array and
-// print from highest index (oldest step) down to 0.
-// ---------------------------------------------------------------
+// display — lecturer-style top-to-bottom output with required header
+void PathStack::display() const {
+    cout << "\nStack contents (Top to Bottom):" << endl;
+    if (isEmpty()) {
+        cout << "  (empty)" << endl;
+        return;
+    }
+    Step* curr  = top;
+    int stepNum = 1;
+    while (curr != nullptr) {
+        cout << "  Step " << stepNum++ << ": " << curr->direction
+             << " -> " << curr->location << endl;
+        curr = curr->next;
+    }
+}
+
+// Recursive helper — recurses to bottom first, then prints on the way back
+// Uses the call stack itself as the reversal mechanism (no heap array needed)
+void PathStack::displayForwardRecursive(Step* current, int& stepNum) const {
+    if (current == nullptr) return;
+    displayForwardRecursive(current->next, stepNum);  // go to oldest step first
+    cout << "  Step " << stepNum++ << ": "
+         << current->direction << " -> " << current->location << endl;
+}
+
+// displayForwardPath — chronological order via recursion, zero array allocation
 void PathStack::displayForwardPath() const {
     cout << "\n=== Forward Path ===" << endl;
     if (isEmpty()) {
         cout << "No path recorded." << endl;
         return;
     }
-
-    // Collect all step pointers into a raw array (no STL allowed)
-    Step** steps = new Step*[size];
-    Step* curr = top;
-    for (int i = 0; i < size; i++) {
-        steps[i] = curr;
-        curr = curr->next;
-    }
-
-    // steps[size-1] = first step pushed, steps[0] = last step pushed
-    for (int i = size - 1; i >= 0; i--) {
-        cout << "  Step " << (size - i) << ": "
-             << steps[i]->direction << " -> " << steps[i]->location << endl;
-    }
-
-    delete[] steps;
+    int startNum = 1;
+    displayForwardRecursive(top, startNum);
 }
 
-// ---------------------------------------------------------------
-// returnPath — simulate robot returning via reversed path
-// Pops steps LIFO, prints each with its reversed direction.
-// ---------------------------------------------------------------
+// returnPath — capture top data, then pop; prints reversed direction per step
 void PathStack::returnPath() {
     cout << "\n=== Return Path (Reverse) ===" << endl;
     if (isEmpty()) {
@@ -125,30 +104,28 @@ void PathStack::returnPath() {
 
     int stepNum = 1;
     while (!isEmpty()) {
-        Step* step = pop();
-        string rev = reverseDirection(step->direction);
+        string originalDir = top->direction;
+        string loc         = top->location;
+        string rev         = reverseDirection(originalDir);
+
         cout << "  Step " << stepNum++ << ": Robot moves "
-             << rev << " <- " << step->location << endl;
-        delete step;
+             << rev << " <- " << loc << endl;
+
+        pop();  // pop() prints confirmation and frees memory
     }
 }
 
-// ---------------------------------------------------------------
-// backtrack — undo last step when obstacle is encountered
-// ---------------------------------------------------------------
+// backtrack — undo last step when obstacle encountered
 void PathStack::backtrack() {
     if (isEmpty()) {
         cout << "Cannot backtrack — no steps recorded." << endl;
         return;
     }
-    Step* step = pop();
-    cout << "Obstacle! Backtracking from " << step->location << "..." << endl;
-    delete step;
+    cout << "Obstacle encountered! Backtracking from " << top->location << "..." << endl;
+    pop();
 }
 
-// ---------------------------------------------------------------
 // reverseDirection — maps each direction to its opposite
-// ---------------------------------------------------------------
 string PathStack::reverseDirection(string dir) const {
     if (dir == "forward")  return "backward";
     if (dir == "backward") return "forward";
