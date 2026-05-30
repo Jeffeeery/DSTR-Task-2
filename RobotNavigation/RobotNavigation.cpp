@@ -1,7 +1,4 @@
 // Task 3 — Robot Navigation & Path Tracking Implementation
-// Member: [Your Name]
-// Student ID: [Your ID]
-// Data Structure: Stack (self-implemented, LIFO)
 
 #include "RobotNavigation.hpp"
 

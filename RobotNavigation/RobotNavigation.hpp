@@ -1,11 +1,4 @@
 // Task 3 — Robot Navigation & Path Tracking Module
-// Member: [Your Name]
-// Student ID: [Your ID]
-// Data Structure: Stack (self-implemented, LIFO — linked-list based)
-//
-// Why Stack?
-//   Return journey = exact reverse of forward path.
-//   LIFO property pops steps in reverse order naturally.
 
 #ifndef ROBOT_NAVIGATION_HPP
 #define ROBOT_NAVIGATION_HPP
