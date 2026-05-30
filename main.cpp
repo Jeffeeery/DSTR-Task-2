@@ -70,6 +70,7 @@ int main() {
     robotPath.push("forward", "Zone-A");
     robotPath.push("left",    "Aisle-2");
     robotPath.push("forward", "Shelf-3");
+    robotPath.display();
     robotPath.displayForwardPath();
 
     // ----------------------------------------------------------
