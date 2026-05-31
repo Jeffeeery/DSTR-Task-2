@@ -1,7 +1,7 @@
 /*
  * Task 5 — Warehouse Layout & Navigation Module Implementation
- * Member: [Your Name]
- * Student ID: [Your ID]
+ * Member: Lee Wei Kee
+ * Student ID: TP076249
  * Data Structure: Tree (hierarchical, self-implemented)
  */
 
@@ -13,9 +13,12 @@ using namespace std;
 // LocationNode constructor
 // ---------------------------------------------------------------
 LocationNode::LocationNode(std::string n, std::string t) {
-    // TODO: name = n, type = t
-    // TODO: children = new LocationNode*[INITIAL_CAPACITY]
-    // TODO: childCount = 0, childCapacity = INITIAL_CAPACITY, parent = nullptr
+    name = n;
+    type = t;
+    children = new LocationNode*[INITIAL_CAPACITY];
+    childCount = 0;
+    childCapacity = INITIAL_CAPACITY;
+    parent = nullptr;
 }
 
 // ---------------------------------------------------------------
@@ -23,124 +26,155 @@ LocationNode::LocationNode(std::string n, std::string t) {
 // (child nodes themselves are freed recursively by WarehouseTree::destroyTree)
 // ---------------------------------------------------------------
 LocationNode::~LocationNode() {
-    // TODO: delete[] children
+    delete[] children;
 }
 
 // ---------------------------------------------------------------
 // addChild — attach a child location under this node
 // ---------------------------------------------------------------
 void LocationNode::addChild(LocationNode* child) {
-    // TODO: If childCount == childCapacity:
-    //         Allocate new array (double capacity)
-    //         Copy existing pointers, delete old array, update capacity
-    // TODO: children[childCount++] = child
-    // TODO: child->parent = this
+    if (childCount == childCapacity) {
+        int newCapacity = childCapacity * 2;
+        LocationNode** newArr = new LocationNode*[newCapacity];
+        for (int i = 0; i < childCount; i++) {
+            newArr[i] = children[i];
+        }
+        delete[] children;
+        children = newArr;
+        childCapacity = newCapacity;
+    }
+    children[childCount++] = child;
+    child->parent = this;
 }
 
 // ---------------------------------------------------------------
 // WarehouseTree constructor / destructor
 // ---------------------------------------------------------------
 WarehouseTree::WarehouseTree() {
-    // TODO: root = nullptr
+    root = nullptr;
 }
 
 WarehouseTree::~WarehouseTree() {
-    // TODO: destroyTree(root)
+    destroyTree(root);
 }
 
 void WarehouseTree::destroyTree(LocationNode* node) {
-    // TODO: If nullptr, return
-    // TODO: Recurse into each child: destroyTree(node->children[i])
-    // TODO: delete node (its destructor frees the children array)
+    if (node == nullptr) return;
+    for (int i = 0; i < node->childCount; i++) {
+        destroyTree(node->children[i]);
+    }
+    delete node;
 }
 
 // ---------------------------------------------------------------
 // buildLayout — construct the warehouse hierarchy
 // ---------------------------------------------------------------
 void WarehouseTree::buildLayout() {
-    // TODO: Create root = new LocationNode("Warehouse", "warehouse")
-    //
-    // TODO: Build the following structure (expand as needed):
-    //
-    //   Warehouse
-    //   +-- Zone-A
-    //   |   +-- Aisle-1
-    //   |   |   +-- Shelf-1
-    //   |   |   +-- Shelf-2
-    //   |   +-- Aisle-2
-    //   |       +-- Shelf-3
-    //   |       +-- Shelf-4
-    //   +-- Zone-B
-    //       +-- Aisle-3
-    //       |   +-- Shelf-5
-    //       |   +-- Shelf-6
-    //       +-- Aisle-4
-    //           +-- Shelf-7
-    //
-    // Example:
-    //   LocationNode* zoneA = new LocationNode("Zone-A", "zone");
-    //   root->addChild(zoneA);
-    //   LocationNode* aisle1 = new LocationNode("Aisle-1", "aisle");
-    //   zoneA->addChild(aisle1);
-    //   aisle1->addChild(new LocationNode("Shelf-1", "shelf"));
-    //   ... and so on
+    root = new LocationNode("Warehouse", "warehouse");
+
+    // --- Zone A ---
+    LocationNode* zoneA = new LocationNode("Zone-A", "zone");
+    root->addChild(zoneA);
+
+    LocationNode* aisle1 = new LocationNode("Aisle-1", "aisle");
+    zoneA->addChild(aisle1);
+    aisle1->addChild(new LocationNode("Shelf-1", "shelf"));
+    aisle1->addChild(new LocationNode("Shelf-2", "shelf"));
+
+    LocationNode* aisle2 = new LocationNode("Aisle-2", "aisle");
+    zoneA->addChild(aisle2);
+    aisle2->addChild(new LocationNode("Shelf-3", "shelf"));
+    aisle2->addChild(new LocationNode("Shelf-4", "shelf"));
+
+    // --- Zone B ---
+    LocationNode* zoneB = new LocationNode("Zone-B", "zone");
+    root->addChild(zoneB);
+
+    LocationNode* aisle3 = new LocationNode("Aisle-3", "aisle");
+    zoneB->addChild(aisle3);
+    aisle3->addChild(new LocationNode("Shelf-5", "shelf"));
+    aisle3->addChild(new LocationNode("Shelf-6", "shelf"));
+
+    LocationNode* aisle4 = new LocationNode("Aisle-4", "aisle");
+    zoneB->addChild(aisle4);
+    aisle4->addChild(new LocationNode("Shelf-7", "shelf"));
 }
 
 // ---------------------------------------------------------------
 // findNode — pre-order recursive search by name
 // ---------------------------------------------------------------
 LocationNode* WarehouseTree::findNode(LocationNode* node, std::string name) const {
-    // TODO: If nullptr, return nullptr
-    // TODO: If node->name == name, return node
-    // TODO: For each child, result = findNode(child, name); if result != nullptr return it
-    // TODO: Return nullptr
+    if (node == nullptr) return nullptr;
+    if (node->name == name) return node;
+    for (int i = 0; i < node->childCount; i++) {
+        LocationNode* result = findNode(node->children[i], name);
+        if (result != nullptr) return result;
+    }
     return nullptr;
 }
 
 LocationNode* WarehouseTree::findLocation(std::string name) const {
-    // TODO: return findNode(root, name)
-    return nullptr;
+    return findNode(root, name);
 }
 
 // ---------------------------------------------------------------
 // buildPath — trace parent links from target to root, then reverse
 // ---------------------------------------------------------------
 int WarehouseTree::buildPath(LocationNode* target, std::string* pathArr, int maxLen) const {
-    // TODO: Walk target->parent->parent... until nullptr, store names in temp array
-    // TODO: Reverse temp array into pathArr (path goes root -> target)
-    // TODO: Return number of locations in path
-    return 0;
+    // Collect from target up to root into a temporary array
+    std::string temp[maxLen];
+    int len = 0;
+    LocationNode* current = target;
+    while (current != nullptr && len < maxLen) {
+        temp[len++] = current->name;
+        current = current->parent;
+    }
+    // Reverse into pathArr so order is root -> target
+    for (int i = 0; i < len; i++) {
+        pathArr[i] = temp[len - 1 - i];
+    }
+    return len;
 }
 
 int WarehouseTree::getPathToLocation(std::string targetName, std::string* pathArr, int maxLen) const {
-    // TODO: target = findLocation(targetName)
-    // TODO: If nullptr, print "Location not found" and return 0
-    // TODO: return buildPath(target, pathArr, maxLen)
-    return 0;
+    LocationNode* target = findLocation(targetName);
+    if (target == nullptr) {
+        cout << "Location not found: " << targetName << endl;
+        return 0;
+    }
+    return buildPath(target, pathArr, maxLen);
 }
 
 // ---------------------------------------------------------------
 // displayTree — indented hierarchy
 // ---------------------------------------------------------------
 void WarehouseTree::displayTree(LocationNode* node, int depth) const {
-    // TODO: If nullptr, return
-    // TODO: Print (depth * 4) spaces, then node->name (type)
-    // TODO: Recurse each child with depth + 1
+    if (node == nullptr) return;
+    for (int i = 0; i < depth * 4; i++) cout << " ";
+    cout << node->name << " (" << node->type << ")" << endl;
+    for (int i = 0; i < node->childCount; i++) {
+        displayTree(node->children[i], depth + 1);
+    }
 }
 
 void WarehouseTree::displayLayout() const {
-    // TODO: Print header "=== Warehouse Layout ==="
-    // TODO: If root nullptr, print "Layout not built yet."
-    // TODO: Otherwise call displayTree(root, 0)
+    cout << "\n=== Warehouse Layout ===" << endl;
+    if (root == nullptr) {
+        cout << "Layout not built yet." << endl;
+        return;
+    }
+    displayTree(root, 0);
 }
 
 void WarehouseTree::traversePreOrder(LocationNode* node) const {
-    // TODO: If nullptr, return
-    // TODO: Print node->name
-    // TODO: Recurse each child
+    if (node == nullptr) return;
+    cout << node->name << endl;
+    for (int i = 0; i < node->childCount; i++) {
+        traversePreOrder(node->children[i]);
+    }
 }
 
 void WarehouseTree::displayPreOrder() const {
-    // TODO: Print header "=== Pre-Order Traversal ==="
-    // TODO: Call traversePreOrder(root)
+    cout << "\n=== Pre-Order Traversal ===" << endl;
+    traversePreOrder(root);
 }

@@ -28,8 +28,9 @@ int main() {
     // ----------------------------------------------------------
     // STEP 1: Initialize warehouse layout (Task 5)
     // ----------------------------------------------------------
-    // TODO: Create WarehouseTree, call buildLayout()
-    // TODO: Display the layout with displayLayout()
+    WarehouseTree warehouse;
+    warehouse.buildLayout();
+    warehouse.displayLayout();
 
     // ----------------------------------------------------------
     // STEP 2: Load item database (Task 4)
@@ -81,8 +82,14 @@ int main() {
     // ----------------------------------------------------------
     // STEP 6: Generate route to item via warehouse layout (Task 5)
     // ----------------------------------------------------------
-    // TODO: Use WarehouseTree::getPathToLocation() to get path array
-    // TODO: Print the generated route
+    string path[10];
+    int pathLen = warehouse.getPathToLocation("Shelf-3", path, 10);
+    cout << "\n[Route] Path to Shelf-3: ";
+    for (int i = 0; i < pathLen; i++) {
+        cout << path[i];
+        if (i < pathLen - 1) cout << " -> ";
+    }
+    cout << endl;
 
     // ----------------------------------------------------------
     // STEP 7: Navigate robot — push each step onto stack (Task 3)
