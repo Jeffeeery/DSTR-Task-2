@@ -49,10 +49,28 @@ int main() {
     // ----------------------------------------------------------
     // STEP 4: Register robots and assign the first order (Task 2)
     // ----------------------------------------------------------
-    // TODO: Create RobotCircularQueue, add robots (e.g., Robot 1–5)
-    // TODO: Dequeue first order from OrderQueue
-    // TODO: Call assignNext() to get robot for the order
-    // TODO: Display robot status with displayStatus()
+    RobotCircularQueue robotQueue;
+    robotQueue.addRobot(1);
+    robotQueue.addRobot(2);
+    robotQueue.addRobot(3);
+    robotQueue.addRobot(4);
+    robotQueue.addRobot(5);
+
+    // Simulate Robot 2 being under maintenance
+    robotQueue.markMaintenance(2);
+
+    // Dequeue first order and assign a robot to it
+    Order* firstOrder = orderQueue.dequeue();
+    if (firstOrder != nullptr) {
+        Robot* assignedRobot = robotQueue.assignNext();
+        if (assignedRobot != nullptr) {
+            cout << "[System] Order " << firstOrder->orderId
+                 << " assigned to Robot " << assignedRobot->robotId << endl;
+        }
+    }
+
+    robotQueue.displayStatus();
+    robotQueue.displayAssignments();
 
     // ----------------------------------------------------------
     // STEP 5: Search for item location (Task 4)
@@ -80,7 +98,10 @@ int main() {
     // STEP 8: Robot completes task — return via reverse path (Task 3)
     // ----------------------------------------------------------
     robotPath.returnPath();
-    // markAvailable(robotId) — handled by Task 2 member
+    // Mark the assigned robot available again after task completion
+    if (firstOrder != nullptr) {
+        robotQueue.markAvailable(1); // Robot 1 was assigned; free it up
+    }
 
     // ----------------------------------------------------------
     // STEP 9: Mark order as completed (Task 1)
