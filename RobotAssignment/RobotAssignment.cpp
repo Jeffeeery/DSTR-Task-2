@@ -1,8 +1,8 @@
 /*
  * Task 2 — Robot Assignment Module Implementation
- * Member: [Your Name]
- * Student ID: [Your ID]
- * Data Structure: Circular Queue (self-implemented)
+ * Member: Ban Cong Yin Brosnan
+ * Student ID: TP076560
+ * Data Structure: Circular Queue (self-implemented, circular linked-list)
  */
 
 #include "RobotAssignment.hpp"
@@ -13,52 +13,95 @@ using namespace std;
 // Robot constructor
 // ---------------------------------------------------------------
 Robot::Robot(int id) {
-    // TODO: Initialize robotId = id, status = "available"
-    // TODO: tasksAssigned = 0, next = nullptr
+    robotId      = id;
+    status       = "available";
+    tasksAssigned = 0;
+    next         = nullptr;
 }
 
 // ---------------------------------------------------------------
 // RobotCircularQueue constructor
 // ---------------------------------------------------------------
 RobotCircularQueue::RobotCircularQueue() {
-    // TODO: Initialize current = nullptr, count = 0
+    current = nullptr;
+    count   = 0;
 }
 
 // ---------------------------------------------------------------
 // Destructor — free all robot nodes
 // ---------------------------------------------------------------
 RobotCircularQueue::~RobotCircularQueue() {
-    // TODO: Break the circular link first (find tail, set tail->next = nullptr)
-    // TODO: Traverse and delete each Robot node
-    // TODO: Set current = nullptr
+    if (current == nullptr) return;
+
+    // Break the circular link so we can traverse linearly
+    Robot* tail = current;
+    while (tail->next != current) {
+        tail = tail->next;
+    }
+    tail->next = nullptr;   // break the circle
+
+    // Delete all nodes
+    Robot* ptr = current;
+    while (ptr != nullptr) {
+        Robot* temp = ptr;
+        ptr = ptr->next;
+        delete temp;
+    }
+    current = nullptr;
 }
 
 // ---------------------------------------------------------------
-// addRobot — insert robot into circular queue
+// addRobot — insert robot at the back of the circular queue
 // ---------------------------------------------------------------
 void RobotCircularQueue::addRobot(int robotId) {
-    // TODO: Create new Robot node
-    // TODO: If empty (current == nullptr):
-    //         new->next = new (points to itself), current = new
-    // TODO: Otherwise:
-    //         Find tail (node whose next == current)
-    //         tail->next = new, new->next = current
-    //         (insert before current to preserve rotation order)
-    // TODO: Increment count
+    Robot* newRobot = new Robot(robotId);
+
+    if (current == nullptr) {
+        // First node — points to itself
+        newRobot->next = newRobot;
+        current = newRobot;
+    } else {
+        // Find tail (node whose next == current)
+        Robot* tail = current;
+        while (tail->next != current) {
+            tail = tail->next;
+        }
+        // Insert new node between tail and current
+        tail->next    = newRobot;
+        newRobot->next = current;
+    }
+
+    count++;
+    cout << "[RobotAssignment] Robot " << robotId << " registered." << endl;
 }
 
 // ---------------------------------------------------------------
 // assignNext — rotate and assign next available robot
 // ---------------------------------------------------------------
 Robot* RobotCircularQueue::assignNext() {
-    // TODO: If empty, print error and return nullptr
-    // TODO: Traverse up to `count` robots from current:
-    //         If status == "available":
-    //           set status = "busy", increment tasksAssigned
-    //           advance current to next robot
-    //           print assignment message, return robot
-    //         Else: move to next and continue
-    // TODO: If no available robot found, print message and return nullptr
+    if (isEmpty()) {
+        cout << "[RobotAssignment] ERROR: No robots registered." << endl;
+        return nullptr;
+    }
+
+    // Try at most `count` robots to avoid infinite loop when all are busy
+    int tried = 0;
+    while (tried < count) {
+        if (current->status == "available") {
+            Robot* assigned   = current;
+            assigned->status  = "busy";
+            assigned->tasksAssigned++;
+            current = current->next;   // advance rotation pointer
+
+            cout << "[RobotAssignment] Robot " << assigned->robotId
+                 << " assigned. (Total tasks: " << assigned->tasksAssigned << ")" << endl;
+            return assigned;
+        }
+        current = current->next;
+        tried++;
+    }
+
+    cout << "[RobotAssignment] No available robots at the moment." << endl;
     return nullptr;
 }
 
@@ -66,38 +109,79 @@ Robot* RobotCircularQueue::assignNext() {
 // markAvailable
 // ---------------------------------------------------------------
 void RobotCircularQueue::markAvailable(int robotId) {
-    // TODO: Traverse circular list (count steps)
-    // TODO: Find robot by robotId, set status = "available"
-    // TODO: Print confirmation
+    if (isEmpty()) return;
+
+    Robot* ptr = current;
+    for (int i = 0; i < count; i++) {
+        if (ptr->robotId == robotId) {
+            ptr->status = "available";
+            cout << "[RobotAssignment] Robot " << robotId << " is now available." << endl;
+            return;
+        }
+        ptr = ptr->next;
+    }
+    cout << "[RobotAssignment] Robot " << robotId << " not found." << endl;
 }
 
 // ---------------------------------------------------------------
 // markMaintenance
 // ---------------------------------------------------------------
 void RobotCircularQueue::markMaintenance(int robotId) {
-    // TODO: Traverse circular list (count steps)
-    // TODO: Find robot by robotId, set status = "maintenance"
-    // TODO: Print confirmation
+    if (isEmpty()) return;
+
+    Robot* ptr = current;
+    for (int i = 0; i < count; i++) {
+        if (ptr->robotId == robotId) {
+            ptr->status = "maintenance";
+            cout << "[RobotAssignment] Robot " << robotId << " set to maintenance." << endl;
+            return;
+        }
+        ptr = ptr->next;
+    }
+    cout << "[RobotAssignment] Robot " << robotId << " not found." << endl;
 }
 
 // ---------------------------------------------------------------
 // displayStatus
 // ---------------------------------------------------------------
 void RobotCircularQueue::displayStatus() const {
-    // TODO: Print header
-    // TODO: If empty, print "No robots registered."
-    // TODO: Traverse count steps, print robotId and status for each
+    cout << "\n--- Robot Status Overview ---" << endl;
+    if (isEmpty()) {
+        cout << "  No robots registered." << endl;
+        return;
+    }
+
+    Robot* ptr = current;
+    for (int i = 0; i < count; i++) {
+        cout << "  Robot " << ptr->robotId
+             << " | Status: " << ptr->status << endl;
+        ptr = ptr->next;
+    }
+    cout << "-----------------------------" << endl;
 }
 
 // ---------------------------------------------------------------
 // displayAssignments
 // ---------------------------------------------------------------
 void RobotCircularQueue::displayAssignments() const {
-    // TODO: Print header
-    // TODO: Traverse count steps, print robotId and tasksAssigned
+    cout << "\n--- Robot Assignment Summary ---" << endl;
+    if (isEmpty()) {
+        cout << "  No robots registered." << endl;
+        return;
+    }
+
+    Robot* ptr = current;
+    for (int i = 0; i < count; i++) {
+        cout << "  Robot " << ptr->robotId
+             << " | Tasks Assigned: " << ptr->tasksAssigned << endl;
+        ptr = ptr->next;
+    }
+    cout << "--------------------------------" << endl;
 }
 
+// ---------------------------------------------------------------
+// isEmpty
+// ---------------------------------------------------------------
 bool RobotCircularQueue::isEmpty() const {
-    // TODO: Return true if current == nullptr
-    return true;
+    return current == nullptr;
 }
