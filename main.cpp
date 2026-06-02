@@ -1,16 +1,3 @@
-/*
- * DSTR Lab Evaluation Work #2 — Warehouse Robot Navigation System
- * CT077-3-2-DSTR | Asia Pacific University | 2026
- *
- * Full system entry point — integrates all 5 modules:
- *   1. OrderManagement    (Queue)          — Task 1
- *   2. RobotAssignment    (Circular Queue) — Task 2
- *   3. RobotNavigation    (Stack)          — Task 3
- *   4. ItemSearch         (BST)            — Task 4
- *   5. WarehouseLayout    (Tree)           — Task 5
- *
- */
-
 #include <iostream>
 #include <string>
 #include "OrderManagement/OrderManagement.hpp"
@@ -83,7 +70,7 @@ int main() {
 
     robotQueue.markMaintenance(2);
 
-    Order* firstOrder = orderQueue.dequeue();
+    Order* firstOrder = orderQueue.peek();
     Robot* assignedRobot = nullptr;
 
     if (firstOrder != nullptr) {
@@ -178,7 +165,7 @@ int main() {
     }
 
     if (firstOrder != nullptr) {
-        orderQueue.markCompleted(firstOrder);
+        orderQueue.processNextOrder();
         firstOrder = nullptr;
     }
 

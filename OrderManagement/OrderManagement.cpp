@@ -1,20 +1,9 @@
-/*
- * Task 1 — Order Management Module Implementation
- * Member: LAI KAH FON
- * Student ID: TP077207
- * Data Structure: Queue (self-implemented, FIFO)
- */
-
 #include "OrderManagement.hpp"
 #include <iostream>
 
 using namespace std;
 
 
-
-// ---------------------------------------------------------------
-// Order constructor
-// ---------------------------------------------------------------
 Order::Order(int id, std::string item) {
     orderId = id;
     itemName = item;
@@ -22,19 +11,17 @@ Order::Order(int id, std::string item) {
     next = nullptr;
 }
 
-// ---------------------------------------------------------------
-// OrderQueue constructor
-// ---------------------------------------------------------------
-OrderQueue::OrderQueue() {
+OrderQueue::OrderQueue(int maxCapacity) {
     front = nullptr;
     rear = nullptr;
     size = 0;
+    maxSize = maxCapacity;
     completedHead = nullptr;
 }
 
-// destructor 
+
 OrderQueue::~OrderQueue() {
-    // Delete all nodes in the pending queue
+
     Order* temp = front;
     while (temp != nullptr) {
         Order* nextNode = temp->next;
@@ -44,7 +31,6 @@ OrderQueue::~OrderQueue() {
     front = nullptr;
     rear = nullptr;
 
-    // Delete all nodes in the completed history list
     temp = completedHead;
     while (temp != nullptr) {
         Order* nextNode = temp->next;
@@ -54,18 +40,20 @@ OrderQueue::~OrderQueue() {
     completedHead = nullptr;
 }
 
-// ---------------------------------------------------------------
-// enqueue — add new order to rear of queue
-// ---------------------------------------------------------------
 void OrderQueue::enqueue(int orderId, string itemName) {
+
+    if (isFull()) {
+        cout << "Queue Overflow: Cannot add order #" << orderId 
+             << " (" << itemName << "). The order queue is full.\n";
+        return;
+    }
     Order* newnode = new Order(orderId, itemName);
     newnode->next = nullptr;
 
-    // If queue is empty, set both front and rear to the new node
     if (front == nullptr) {
         front = rear = newnode;
     } 
-    // Otherwise, append to the back and update rear
+
     else {
         rear->next = newnode;
         rear = newnode;
@@ -75,33 +63,27 @@ void OrderQueue::enqueue(int orderId, string itemName) {
     cout << "Order #" << orderId << " (" << itemName << ") added to the queue.\n";
 }
 
-// ---------------------------------------------------------------
-// dequeue — remove and return front order
-// ---------------------------------------------------------------
+
 Order* OrderQueue::dequeue() {
-    // Check for queue underflow
+
     if (front == nullptr) {
         cout << "Queue Underflow: The order queue is empty.\n";
         return nullptr;
     }
 
-    // Disconnect the front node
     Order* temp = front;
     front = front->next;
 
-    // If queue becomes empty, reset rear to nullptr
     if (front == nullptr) {
         rear = nullptr;
     }
 
     size--; 
-    temp->next = nullptr; // Detach node link cleanly before returning
+    temp->next = nullptr; 
     return temp;
 }
 
-// ---------------------------------------------------------------
-// peek — view front order without removing
-// ---------------------------------------------------------------
+
 Order* OrderQueue::peek() const {
     return front;
 }
@@ -110,28 +92,40 @@ bool OrderQueue::isEmpty() const {
     return front == nullptr;
 }
 
+bool OrderQueue::isFull() const {
+    return size >= maxSize;
+}
+
 int OrderQueue::getSize() const {
     return size;
 }
 
-// ---------------------------------------------------------------
-// markCompleted — move a processed order to the completed list
-// ---------------------------------------------------------------
+
 void OrderQueue::markCompleted(Order* order) {
     if (order == nullptr) return;
 
     order->status = "completed";
 
-    // Prepend the order to the completed head list
     order->next = completedHead;
     completedHead = order;
     
     cout << "Order #" << order->orderId << " marked as completed.\n";
 }
 
-// ---------------------------------------------------------------
-// displayPending — print all orders currently in the queue
-// ---------------------------------------------------------------
+void OrderQueue::processNextOrder() {
+
+    Order* nextOrder = dequeue();
+
+    if (nextOrder == nullptr) {
+        cout << "System Status: No orders available in the queue to process.\n";
+        return;
+    }
+
+    markCompleted(nextOrder);
+}
+
+
+
 void OrderQueue::displayPending() const {
     cout << "\n--- Pending Orders ---\n";
     
@@ -140,7 +134,6 @@ void OrderQueue::displayPending() const {
         return;
     }
 
-    // Traverse and print from front to rear
     Order* temp = front;
     while (temp != nullptr) {
         cout << "ID: " << temp->orderId 
@@ -150,9 +143,7 @@ void OrderQueue::displayPending() const {
     }
 }
 
-// ---------------------------------------------------------------
-// displayCompleted — print all completed orders
-// ---------------------------------------------------------------
+
 void OrderQueue::displayCompleted() const {
     cout << "\n--- Completed Orders ---\n";
 
@@ -161,7 +152,6 @@ void OrderQueue::displayCompleted() const {
         return;
     }
 
-    // Traverse and print from completedHead to the end
     Order* temp = completedHead;
     while (temp != nullptr) {
         cout << "ID: " << temp->orderId 
