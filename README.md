@@ -25,11 +25,11 @@ The system handles order management, robot assignment, navigation, item search, 
 
 | Task | Module | Data Structure | Member |
 |------|--------|----------------|--------|
-| 1 | Order Management | Queue | EV |
-| 2 | Robot Assignment | Circular Queue | BAN |
+| 1 | Order Management | Queue | Lai Kah Fon (TP077207) |
+| 2 | Robot Assignment | Circular Queue | Ban Cong Yin Brosnan (TP076560) |
 | 3 | Robot Navigation & Path Tracking | Stack | EEE |
-| 4 | Item Search & Management *(Optional)* | BST / Tree | WT |
-| 5 | Warehouse Layout & Navigation *(Optional)* | Tree | WK |
+| 4 | Item Search & Management *(Optional)* | BST | Ng Wan Teng (TP076289) |
+| 5 | Warehouse Layout & Navigation *(Optional)* | Tree | Lee Wei Kee (TP076249) |
 
 ---
 
@@ -94,6 +94,18 @@ WK
 
 **Data Structure:** Self-implemented Tree (hierarchical, multi-child nodes)  
 **Output:** Visual/textual warehouse layout, path between locations, traversal results
+
+---
+
+## How to Compile & Run
+
+```bash
+g++ main.cpp OrderManagement/OrderManagement.cpp RobotAssignment/RobotAssignment.cpp RobotNavigation/RobotNavigation.cpp ItemSearch/ItemSearch.cpp WarehouseLayout/WarehouseLayout.cpp -o main.exe
+```
+
+```bash
+.\main.exe
+```
 
 ---
 
