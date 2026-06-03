@@ -18,8 +18,8 @@ using namespace std;
 
 // Represents one location in the warehouse hierarchy (tree node)
 struct LocationNode {
-    string name;           // e.g., "Zone-A", "Aisle-1", "Shelf-3"
-    string type;           // "warehouse", "zone", "aisle", "shelf"
+    string name;           
+    string type;    
     LocationNode** children;    // dynamic array of child pointers
     int childCount;
     int childCapacity;
@@ -68,4 +68,4 @@ public:
     void displayRoute(const string& fromName, const string& toName) const;
 };
 
-#endif // WAREHOUSE_LAYOUT_HPP
+#endif 
