@@ -1,3 +1,10 @@
+/* 
+ * Task 1 — Order Management Module Implementation
+ * Member: Lai Kah Fon
+ * Student ID: TP077207
+ * Data Structure: Queue (self-implemented, FIFO)
+*/
+
 #include "OrderManagement.hpp"
 #include <iostream>
 
@@ -15,13 +22,14 @@ OrderQueue::OrderQueue(int maxCapacity) {
     front = nullptr;
     rear = nullptr;
     size = 0;
-    maxSize = maxCapacity;
+    maxSize = maxCapacity; // default max capacity = 20
     completedHead = nullptr;
 }
 
-
+// Destructor 
 OrderQueue::~OrderQueue() {
 
+    // Delete all pending orders
     Order* temp = front;
     while (temp != nullptr) {
         Order* nextNode = temp->next;
@@ -31,6 +39,7 @@ OrderQueue::~OrderQueue() {
     front = nullptr;
     rear = nullptr;
 
+    // Delete all completed orders
     temp = completedHead;
     while (temp != nullptr) {
         Order* nextNode = temp->next;
@@ -41,7 +50,7 @@ OrderQueue::~OrderQueue() {
 }
 
 void OrderQueue::enqueue(int orderId, string itemName) {
-
+    // overflow case
     if (isFull()) {
         cout << "Queue Overflow: Cannot add order #" << orderId 
              << " (" << itemName << "). The order queue is full.\n";
@@ -50,11 +59,12 @@ void OrderQueue::enqueue(int orderId, string itemName) {
     Order* newnode = new Order(orderId, itemName);
     newnode->next = nullptr;
 
+    // if queue is empty ，set new node as front and rear
     if (front == nullptr) {
         front = rear = newnode;
     } 
 
-    else {
+    else { // else , add to the back and update rear
         rear->next = newnode;
         rear = newnode;
     }
@@ -66,6 +76,7 @@ void OrderQueue::enqueue(int orderId, string itemName) {
 
 Order* OrderQueue::dequeue() {
 
+    // underflow case
     if (front == nullptr) {
         cout << "Queue Underflow: The order queue is empty.\n";
         return nullptr;
@@ -79,7 +90,7 @@ Order* OrderQueue::dequeue() {
     }
 
     size--; 
-    temp->next = nullptr; 
+    temp->next = nullptr; // detach from queue
     return temp;
 }
 
@@ -106,16 +117,19 @@ void OrderQueue::markCompleted(Order* order) {
 
     order->status = "completed";
 
+    // Add to completed list
     order->next = completedHead;
     completedHead = order;
     
     cout << "Order #" << order->orderId << " marked as completed.\n";
 }
 
+// Function to process dequeue and mark as completed
 void OrderQueue::processNextOrder() {
 
     Order* nextOrder = dequeue();
 
+    // empty queue case
     if (nextOrder == nullptr) {
         cout << "System Status: No orders available in the queue to process.\n";
         return;
@@ -125,7 +139,7 @@ void OrderQueue::processNextOrder() {
 }
 
 
-
+// Print all pending orders in the queue
 void OrderQueue::displayPending() const {
     cout << "\n--- Pending Orders ---\n";
     
@@ -134,6 +148,7 @@ void OrderQueue::displayPending() const {
         return;
     }
 
+    // Traverse and print from front to rear
     Order* temp = front;
     while (temp != nullptr) {
         cout << "ID: " << temp->orderId 
@@ -143,7 +158,7 @@ void OrderQueue::displayPending() const {
     }
 }
 
-
+// Print all completed orders
 void OrderQueue::displayCompleted() const {
     cout << "\n--- Completed Orders ---\n";
 
@@ -152,6 +167,7 @@ void OrderQueue::displayCompleted() const {
         return;
     }
 
+    // Traverse and print from completedHead to end
     Order* temp = completedHead;
     while (temp != nullptr) {
         cout << "ID: " << temp->orderId 

@@ -176,6 +176,7 @@ int main() {
 
     ItemBST itemDatabase;
 
+    cout << "\n=== Inserting Items into Database ===" << endl;
     itemDatabase.insert(504, "Control Chip D", "Shelf-1");
     itemDatabase.insert(502, "Sensor Unit B", "Shelf-2");
     itemDatabase.insert(506, "Battery Pack C", "Shelf-3");
@@ -211,11 +212,13 @@ int main() {
         cout << "[ItemSearch] Item not found: Packing Tape E" << endl;
     }
 
+    cout << "\n=== New Order Simulation ===" << endl;
     OrderQueue orderQueue;
     orderQueue.enqueue(1001, "Motor Part A");
     orderQueue.enqueue(1002, "Sensor Unit B");
     orderQueue.enqueue(1003, "Battery Pack C");
     orderQueue.displayPending();
+    cout << endl;
 
     RobotCircularQueue robotQueue;
     robotQueue.addRobot(1);
@@ -264,8 +267,6 @@ int main() {
                  << firstOrder->itemName << endl;
             cout << "[System] Cannot generate route because item location is unavailable." << endl;
 
-            delete firstOrder;
-            firstOrder = nullptr;
             return 0;
         }
     }
@@ -276,10 +277,6 @@ int main() {
     if (pathLen == 0) {
         cout << "[System] Cannot generate route because warehouse location is invalid." << endl;
 
-        if (firstOrder != nullptr) {
-            delete firstOrder;
-            firstOrder = nullptr;
-        }
 
         return 0;
     }
@@ -336,6 +333,9 @@ int main() {
         orderQueue.processNextOrder();
         firstOrder = nullptr;
     }
+
+    cout << "\n=== Final System Status ===" << endl;
+    robotQueue.displayStatus();
 
     orderQueue.displayCompleted();
     orderQueue.displayPending();
