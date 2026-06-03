@@ -8,6 +8,162 @@
 
 using namespace std;
 
+// ---------------------------------------------------------------
+// Interactive demo — shares all live data structures with main
+// ---------------------------------------------------------------
+void runInteractiveMenu(WarehouseTree& warehouse, ItemBST& itemDatabase,
+                        OrderQueue& orderQueue, RobotCircularQueue& robotQueue) {
+    int nextOrderId = 2001;
+    int choice = -1;
+
+    while (choice != 0) {
+        cout << "\n========================================" << endl;
+        cout << "        Interactive Demo Menu           " << endl;
+        cout << "========================================" << endl;
+        cout << "1. Add New Order" << endl;
+        cout << "2. Add New Item to Database" << endl;
+        cout << "3. Search Item (by ID or Name)" << endl;
+        cout << "4. Process Next Order (Assign Robot + Navigate)" << endl;
+        cout << "5. Display Pending Orders" << endl;
+        cout << "6. Display Completed Orders" << endl;
+        cout << "7. Display Robot Status" << endl;
+        cout << "8. Display Warehouse Layout" << endl;
+        cout << "0. Exit Interactive Mode" << endl;
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        if (choice == 1) {
+            string itemName;
+            cout << "Enter item name: ";
+            getline(cin, itemName);
+            orderQueue.enqueue(nextOrderId++, itemName);
+
+        } else if (choice == 2) {
+            int itemId;
+            string itemName, location;
+            cout << "Enter item ID: ";
+            cin >> itemId;
+            cin.ignore();
+            cout << "Enter item name: ";
+            getline(cin, itemName);
+            cout << "Enter location (e.g. Shelf-1 to Shelf-8): ";
+            getline(cin, location);
+            itemDatabase.insert(itemId, itemName, location);
+
+        } else if (choice == 3) {
+            cout << "Search by — 1) ID   2) Name: ";
+            int searchChoice;
+            cin >> searchChoice;
+            cin.ignore();
+
+            if (searchChoice == 1) {
+                int id;
+                cout << "Enter item ID: ";
+                cin >> id;
+                cin.ignore();
+                ItemNode* result = itemDatabase.searchById(id);
+                if (result != nullptr)
+                    cout << "[ItemSearch] Found: " << result->itemId
+                         << " | " << result->itemName
+                         << " | " << result->location << endl;
+                else
+                    cout << "[ItemSearch] Item ID " << id << " not found." << endl;
+            } else {
+                string name;
+                cout << "Enter item name: ";
+                getline(cin, name);
+                ItemNode* result = itemDatabase.searchByName(name);
+                if (result != nullptr)
+                    cout << "[ItemSearch] Found: " << result->itemId
+                         << " | " << result->itemName
+                         << " | " << result->location << endl;
+                else
+                    cout << "[ItemSearch] Item '" << name << "' not found." << endl;
+            }
+
+        } else if (choice == 4) {
+            Order* order = orderQueue.peek();
+            if (order == nullptr) {
+                cout << "[System] No pending orders to process." << endl;
+                continue;
+            }
+
+            cout << "\n[System] Processing Order #" << order->orderId
+                 << " — Item: " << order->itemName << endl;
+
+            // Locate item in BST
+            ItemNode* item = itemDatabase.searchByName(order->itemName);
+            if (item == nullptr) {
+                cout << "[ItemSearch] Item '" << order->itemName
+                     << "' not in database. Cannot navigate." << endl;
+                continue;
+            }
+            string itemLocation = item->location;
+            cout << "[ItemSearch] Item found at: " << itemLocation << endl;
+
+            // Get root-to-shelf path from warehouse tree
+            string path[20];
+            int pathLen = warehouse.getPathToLocation(itemLocation, path, 20);
+            if (pathLen == 0) {
+                cout << "[System] Location '" << itemLocation
+                     << "' not in warehouse layout." << endl;
+                continue;
+            }
+
+            cout << "\n[Route] Path to " << itemLocation << ": ";
+            for (int i = 0; i < pathLen; i++) {
+                cout << path[i];
+                if (i < pathLen - 1) cout << " -> ";
+            }
+            cout << endl;
+
+            // Assign next available robot
+            Robot* assignedRobot = robotQueue.assignNext();
+            if (assignedRobot == nullptr) {
+                cout << "[System] No available robots. Cannot process order." << endl;
+                continue;
+            }
+            cout << "[System] Order #" << order->orderId
+                 << " assigned to Robot " << assignedRobot->robotId << endl;
+
+            // Push navigation steps — directions follow depth in tree
+            PathStack robotPath;
+            string directions[] = { "forward", "left", "forward", "forward", "forward" };
+            for (int i = 1; i < pathLen; i++) {
+                string dir = (i - 1 < 5) ? directions[i - 1] : "forward";
+                robotPath.push(dir, path[i]);
+            }
+
+            robotPath.display();
+            robotPath.displayForwardPath();
+            robotPath.returnPath();
+
+            // Release robot then complete order
+            robotQueue.markAvailable(assignedRobot->robotId);
+            orderQueue.processNextOrder();
+
+        } else if (choice == 5) {
+            orderQueue.displayPending();
+
+        } else if (choice == 6) {
+            orderQueue.displayCompleted();
+
+        } else if (choice == 7) {
+            robotQueue.displayStatus();
+            robotQueue.displayAssignments();
+
+        } else if (choice == 8) {
+            warehouse.displayLayout();
+
+        } else if (choice != 0) {
+            cout << "Invalid choice. Enter 0-8." << endl;
+        }
+    }
+
+    cout << "[System] Exiting interactive demo." << endl;
+}
+
 int main() {
     cout << "========================================" << endl;
     cout << "  Warehouse Robot Navigation System     " << endl;
@@ -142,6 +298,18 @@ int main() {
 
     warehouse.displayRoute("Shelf-6", itemLocation);
 
+    // === Obstacle Handling Demo (backtrack feature) ===
+    cout << "\n=== Obstacle Handling Demo ===" << endl;
+    cout << "[System] Robot attempts wrong turn: Zone-A -> Aisle-1 (incorrect aisle)." << endl;
+    PathStack obstaclePath;
+    obstaclePath.push("forward", "Zone-A");
+    obstaclePath.push("right", "Aisle-1");
+    obstaclePath.backtrack();
+    cout << "[System] Obstacle cleared. Robot reroutes correctly to Aisle-2." << endl;
+    obstaclePath.push("left", "Aisle-2");
+    obstaclePath.push("forward", "Shelf-3");
+    obstaclePath.displayForwardPath();
+
     PathStack robotPath;
     string directionMap[] = { "forward", "left", "forward", "forward" };
 
@@ -175,6 +343,13 @@ int main() {
     cout << "\n========================================" << endl;
     cout << "  System simulation complete.           " << endl;
     cout << "========================================" << endl;
+
+    cout << "\n========================================" << endl;
+    cout << "      Entering Interactive Mode         " << endl;
+    cout << "  (Shared state from demo above)        " << endl;
+    cout << "========================================" << endl;
+
+    runInteractiveMenu(warehouse, itemDatabase, orderQueue, robotQueue);
 
     return 0;
 }

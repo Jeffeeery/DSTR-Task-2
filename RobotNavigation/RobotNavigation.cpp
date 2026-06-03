@@ -1,5 +1,9 @@
-// Task 3 — Robot Navigation & Path Tracking Implementation
-
+/*
+ * Task 3 — Robot Navigation & Path Tracking Implementation
+ * Member: Eee Kong Siong
+ * Student ID: TP076904
+ * Data Structure: Stack
+ */
 #include "RobotNavigation.hpp"
 
 using namespace std;
@@ -36,8 +40,6 @@ void PathStack::pop() {
         return;
     }
     Step* temp = top;
-    cout << temp->direction << " step from " << temp->location << " popped from stack." << endl;
-
     top = top->next;
     delete temp;
     size--;
