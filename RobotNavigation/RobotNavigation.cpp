@@ -2,7 +2,7 @@
  * Task 3 — Robot Navigation & Path Tracking Implementation
  * Member: Eee Kong Siong
  * Student ID: TP076904
- * Data Structure: Stack
+ * Data Structure: Stack (self-implemented, LIFO)
  */
 #include "RobotNavigation.hpp"
 
