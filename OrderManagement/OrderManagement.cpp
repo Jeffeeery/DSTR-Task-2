@@ -2,6 +2,7 @@
  * Task 1 — Order Management Module Implementation
  * Member: Lai Kah Fon
  * Student ID: TP077207
+ * Data Structure: Queue (self-implemented, FIFO)
 */
 
 #include "OrderManagement.hpp"
