@@ -9,38 +9,28 @@
 
 using namespace std;
 
-// ---------------------------------------------------------------
-// Robot constructor
-// ---------------------------------------------------------------
 Robot::Robot(int id) {
-    robotId      = id;
-    status       = "available";
+    robotId       = id;
+    status        = "available";
     tasksAssigned = 0;
-    next         = nullptr;
+    next          = nullptr;
 }
 
-// ---------------------------------------------------------------
-// RobotCircularQueue constructor
-// ---------------------------------------------------------------
 RobotCircularQueue::RobotCircularQueue() {
     current = nullptr;
     count   = 0;
 }
 
-// ---------------------------------------------------------------
-// Destructor — free all robot nodes
-// ---------------------------------------------------------------
 RobotCircularQueue::~RobotCircularQueue() {
     if (current == nullptr) return;
 
-    // Break the circular link so we can traverse linearly
+    // Break the circular link before deleting to avoid infinite traversal
     Robot* tail = current;
     while (tail->next != current) {
         tail = tail->next;
     }
-    tail->next = nullptr;   // break the circle
+    tail->next = nullptr;
 
-    // Delete all nodes
     Robot* ptr = current;
     while (ptr != nullptr) {
         Robot* temp = ptr;
@@ -50,24 +40,19 @@ RobotCircularQueue::~RobotCircularQueue() {
     current = nullptr;
 }
 
-// ---------------------------------------------------------------
-// addRobot — insert robot at the back of the circular queue
-// ---------------------------------------------------------------
 void RobotCircularQueue::addRobot(int robotId) {
     Robot* newRobot = new Robot(robotId);
 
     if (current == nullptr) {
-        // First node — points to itself
-        newRobot->next = newRobot;
+        newRobot->next = newRobot; // First node points to itself
         current = newRobot;
     } else {
-        // Find tail (node whose next == current)
+        // Find tail (node whose next == current) and insert before current
         Robot* tail = current;
         while (tail->next != current) {
             tail = tail->next;
         }
-        // Insert new node between tail and current
-        tail->next    = newRobot;
+        tail->next     = newRobot;
         newRobot->next = current;
     }
 
@@ -75,9 +60,6 @@ void RobotCircularQueue::addRobot(int robotId) {
     cout << "[RobotAssignment] Robot " << robotId << " registered." << endl;
 }
 
-// ---------------------------------------------------------------
-// assignNext — rotate and assign next available robot
-// ---------------------------------------------------------------
 Robot* RobotCircularQueue::assignNext() {
     if (isEmpty()) {
         cout << "[RobotAssignment] ERROR: No robots registered." << endl;
@@ -88,10 +70,10 @@ Robot* RobotCircularQueue::assignNext() {
     int tried = 0;
     while (tried < count) {
         if (current->status == "available") {
-            Robot* assigned   = current;
-            assigned->status  = "busy";
+            Robot* assigned  = current;
+            assigned->status = "busy";
             assigned->tasksAssigned++;
-            current = current->next;   // advance rotation pointer
+            current = current->next; // Advance rotation pointer
 
             cout << "[RobotAssignment] Robot " << assigned->robotId
                  << " assigned. (Total tasks: " << assigned->tasksAssigned << ")" << endl;
@@ -105,9 +87,6 @@ Robot* RobotCircularQueue::assignNext() {
     return nullptr;
 }
 
-// ---------------------------------------------------------------
-// markAvailable
-// ---------------------------------------------------------------
 void RobotCircularQueue::markAvailable(int robotId) {
     if (isEmpty()) return;
 
@@ -123,9 +102,6 @@ void RobotCircularQueue::markAvailable(int robotId) {
     cout << "[RobotAssignment] Robot " << robotId << " not found." << endl;
 }
 
-// ---------------------------------------------------------------
-// markMaintenance
-// ---------------------------------------------------------------
 void RobotCircularQueue::markMaintenance(int robotId) {
     if (isEmpty()) return;
 
@@ -141,9 +117,6 @@ void RobotCircularQueue::markMaintenance(int robotId) {
     cout << "[RobotAssignment] Robot " << robotId << " not found." << endl;
 }
 
-// ---------------------------------------------------------------
-// displayStatus
-// ---------------------------------------------------------------
 void RobotCircularQueue::displayStatus() const {
     cout << "\n--- Robot Status Overview ---" << endl;
     if (isEmpty()) {
@@ -160,9 +133,6 @@ void RobotCircularQueue::displayStatus() const {
     cout << "-----------------------------" << endl;
 }
 
-// ---------------------------------------------------------------
-// displayAssignments
-// ---------------------------------------------------------------
 void RobotCircularQueue::displayAssignments() const {
     cout << "\n--- Robot Assignment Summary ---" << endl;
     if (isEmpty()) {
@@ -179,9 +149,6 @@ void RobotCircularQueue::displayAssignments() const {
     cout << "--------------------------------" << endl;
 }
 
-// ---------------------------------------------------------------
-// isEmpty
-// ---------------------------------------------------------------
 bool RobotCircularQueue::isEmpty() const {
     return current == nullptr;
 }
