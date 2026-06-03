@@ -1,3 +1,9 @@
+/* 
+ * Task 1 — Order Management Module Implementation
+ * Member: Lai Kah Fon
+ * Student ID: TP077207
+*/
+
 #include "OrderManagement.hpp"
 #include <iostream>
 
