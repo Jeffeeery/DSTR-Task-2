@@ -9,9 +9,7 @@
 
 using namespace std;
 
-// ---------------------------------------------------------------
 // LocationNode constructor
-// ---------------------------------------------------------------
 LocationNode::LocationNode(std::string n, std::string t) {
     name = n;
     type = t;
@@ -21,17 +19,13 @@ LocationNode::LocationNode(std::string n, std::string t) {
     parent = nullptr;
 }
 
-// ---------------------------------------------------------------
 // LocationNode destructor — frees only the children pointer array
 // (child nodes themselves are freed recursively by WarehouseTree::destroyTree)
-// ---------------------------------------------------------------
 LocationNode::~LocationNode() {
     delete[] children;
 }
 
-// ---------------------------------------------------------------
 // addChild — attach a child location under this node
-// ---------------------------------------------------------------
 void LocationNode::addChild(LocationNode* child) {
     if (childCount == childCapacity) {
         int newCapacity = childCapacity * 2;
@@ -47,9 +41,7 @@ void LocationNode::addChild(LocationNode* child) {
     child->parent = this;
 }
 
-// ---------------------------------------------------------------
 // WarehouseTree constructor / destructor
-// ---------------------------------------------------------------
 WarehouseTree::WarehouseTree() {
     root = nullptr;
 }
@@ -146,9 +138,7 @@ void WarehouseTree::displayRoute(const string& fromName, const string& toName) c
     cout << "Total steps: " << (len - 1) << endl;
 }
 
-// ---------------------------------------------------------------
 // buildLayout — construct the warehouse hierarchy
-// ---------------------------------------------------------------
 void WarehouseTree::buildLayout() {
     root = new LocationNode("Warehouse", "warehouse");
 
@@ -181,9 +171,7 @@ void WarehouseTree::buildLayout() {
     aisle4->addChild(new LocationNode("Shelf-8", "shelf"));
 }
 
-// ---------------------------------------------------------------
 // findNode — pre-order recursive search by name
-// ---------------------------------------------------------------
 LocationNode* WarehouseTree::findNode(LocationNode* node, const string& name) const {
     if (node == nullptr) return nullptr;
     if (node->name == name) return node;
@@ -198,9 +186,7 @@ LocationNode* WarehouseTree::findLocation(const string& name) const {
     return findNode(root, name);
 }
 
-// ---------------------------------------------------------------
 // buildPath — trace parent links from target to root, then reverse
-// ---------------------------------------------------------------
 int WarehouseTree::buildPath(LocationNode* target, std::string* pathArr, int maxLen) const {
     string temp[MAX_PATH_LEN];
     int len = 0;
@@ -227,9 +213,7 @@ int WarehouseTree::getPathToLocation(const string& targetName, string* pathArr, 
     return buildPath(target, pathArr, maxLen);
 }
 
-// ---------------------------------------------------------------
 // displayTree — indented hierarchy
-// ---------------------------------------------------------------
 void WarehouseTree::displayTree(LocationNode* node, int depth) const {
     if (node == nullptr) return;
     for (int i = 0; i < depth * 4; i++) cout << " ";

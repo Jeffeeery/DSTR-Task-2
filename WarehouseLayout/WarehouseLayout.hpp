@@ -5,19 +5,6 @@
  * Data Structure: Tree (self-implemented, hierarchical multi-child nodes)
  *
  * Hierarchy: Warehouse --> Zones --> Aisles --> Shelves
- *
- * Responsibility:
- *   - Model physical warehouse structure as a tree
- *   - Define parent-child relationships between locations
- *   - Generate path from root to any target location
- *   - Support full pre-order traversal
- *   - Integrate with Task 3 (Robot Navigation) for path planning
- *
- * Why Tree?
- *   A warehouse has a natural hierarchy: one warehouse contains multiple
- *   zones, each zone has multiple aisles, each aisle has multiple shelves.
- *   A tree mirrors this exactly. Parent-pointer links let us trace any
- *   path back to the root to generate navigation routes.
  */
 
 #ifndef WAREHOUSE_LAYOUT_HPP
@@ -33,8 +20,8 @@ using namespace std;
 
 // Represents one location in the warehouse hierarchy (tree node)
 struct LocationNode {
-    string name;           // e.g., "Zone-A", "Aisle-1", "Shelf-3"
-    string type;           // "warehouse", "zone", "aisle", "shelf"
+    string name;           
+    string type;    
     LocationNode** children;    // dynamic array of child pointers
     int childCount;
     int childCapacity;
@@ -81,8 +68,6 @@ public:
     void displayPreOrder() const;
     int getPathBetweenLocations(const string& fromName, const string& toName, string* pathArr, int maxLen) const;
     void displayRoute(const string& fromName, const string& toName) const;
-
-    // TODO: Add any additional helper methods
 };
 
-#endif // WAREHOUSE_LAYOUT_HPP
+#endif 
