@@ -1,5 +1,9 @@
-// Task 3 — Robot Navigation & Path Tracking Module
-
+/*
+ * Task 3 — Robot Navigation & Path Tracking Implementation
+ * Member: Eee Kong Siong
+ * Student ID: TP076904
+ * Data Structure: Stack (self-implemented, LIFO)
+ */
 #ifndef ROBOT_NAVIGATION_HPP
 #define ROBOT_NAVIGATION_HPP
 
@@ -21,7 +25,7 @@ private:
     Step* top;  // pointer to most recently recorded step
     int size;
 
-    // Recursive helper: prints path in chronological order (bottom to top)
+    // prints path in chronological order (bottom to top)
     void displayForwardRecursive(Step* current, int& stepNum) const;
 
 public:
@@ -35,10 +39,10 @@ public:
     bool isEmpty() const;
     int getSize() const;
 
-    // Lecturer-style: display stack top to bottom
+    // Display stack top to bottom
     void display() const;
 
-    // Assignment requirement: display path in chronological order
+    // Display path in chronological order
     void displayForwardPath() const;
 
     // Simulate full return via reversed path

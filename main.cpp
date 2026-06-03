@@ -46,7 +46,7 @@ void runInteractiveMenu(WarehouseTree& warehouse, ItemBST& itemDatabase,
             }
 
             cout << "\n[System] Processing Order #" << order->orderId
-                 << " — Item: " << order->itemName << endl;
+                 << " - Item: " << order->itemName << endl;
 
             // Locate item in BST
             ItemNode* item = itemDatabase.searchByName(order->itemName);

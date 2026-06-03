@@ -1,22 +1,3 @@
-/*
- * Task 2 — Robot Assignment Module
- * Member: [Your Name]
- * Student ID: [Your ID]
- * Data Structure: Circular Queue (self-implemented, circular linked-list)
- *
- * Responsibility:
- *   - Maintain list of robots with status: available / busy / maintenance
- *   - Assign tasks in continuous rotation — no cycle restart
- *   - Skip robots that are unavailable or under maintenance
- *   - Track task count per robot
- *   - Ensure uninterrupted assignment cycle
- *
- * Why Circular Queue?
- *   Robots are assigned in round-robin rotation. A circular structure
- *   wraps the pointer naturally from the last robot back to the first —
- *   no reset needed, and no robot is permanently skipped.
- */
-
 #ifndef ROBOT_ASSIGNMENT_HPP
 #define ROBOT_ASSIGNMENT_HPP
 
@@ -35,7 +16,7 @@ struct Robot {
     Robot(int id);
 };
 
-// Self-implemented Circular Queue — DO NOT use STL containers
+// Self-implemented Circular Queue
 class RobotCircularQueue {
 private:
     Robot* current;     // rotating pointer — always points to next candidate
@@ -58,8 +39,6 @@ public:
     void displayAssignments() const;
 
     bool isEmpty() const;
-
-    // TODO: Add any additional helper methods
 };
 
 #endif // ROBOT_ASSIGNMENT_HPP

@@ -113,7 +113,7 @@ void PathStack::returnPath() {
         cout << "  Step " << stepNum++ << ": Robot moves "
              << rev << " <- " << loc << endl;
 
-        pop();  // pop() prints confirmation and frees memory
+        pop();  // prints confirmation and frees memory
     }
 }
 

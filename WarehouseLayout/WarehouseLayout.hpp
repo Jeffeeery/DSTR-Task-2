@@ -3,21 +3,6 @@
  * Member: Lee Wei Kee
  * Student ID: TP076249
  * Data Structure: Tree (self-implemented, hierarchical multi-child nodes)
- *
- * Hierarchy: Warehouse --> Zones --> Aisles --> Shelves
- *
- * Responsibility:
- *   - Model physical warehouse structure as a tree
- *   - Define parent-child relationships between locations
- *   - Generate path from root to any target location
- *   - Support full pre-order traversal
- *   - Integrate with Task 3 (Robot Navigation) for path planning
- *
- * Why Tree?
- *   A warehouse has a natural hierarchy: one warehouse contains multiple
- *   zones, each zone has multiple aisles, each aisle has multiple shelves.
- *   A tree mirrors this exactly. Parent-pointer links let us trace any
- *   path back to the root to generate navigation routes.
  */
 
 #ifndef WAREHOUSE_LAYOUT_HPP
@@ -46,7 +31,7 @@ struct LocationNode {
     void addChild(LocationNode* child);
 };
 
-// Self-implemented Tree — DO NOT use STL containers
+// Self-implemented Tree
 class WarehouseTree {
 private:
     LocationNode* root;
