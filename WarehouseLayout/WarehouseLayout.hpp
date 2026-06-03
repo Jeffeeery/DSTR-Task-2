@@ -66,8 +66,6 @@ public:
     void displayPreOrder() const;
     int getPathBetweenLocations(const string& fromName, const string& toName, string* pathArr, int maxLen) const;
     void displayRoute(const string& fromName, const string& toName) const;
-
-    // TODO: Add any additional helper methods
 };
 
 #endif // WAREHOUSE_LAYOUT_HPP

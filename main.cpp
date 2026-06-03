@@ -9,7 +9,7 @@
 using namespace std;
 
 // ---------------------------------------------------------------
-// Interactive demo — shares all live data structures with main
+// Interactive demo
 // ---------------------------------------------------------------
 void runInteractiveMenu(WarehouseTree& warehouse, ItemBST& itemDatabase,
                         OrderQueue& orderQueue, RobotCircularQueue& robotQueue) {

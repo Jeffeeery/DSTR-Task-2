@@ -120,7 +120,7 @@ void PathStack::returnPath() {
 // backtrack — undo last step when obstacle encountered
 void PathStack::backtrack() {
     if (isEmpty()) {
-        cout << "Cannot backtrack — no steps recorded." << endl;
+        cout << "Cannot backtrack - no steps recorded." << endl;
         return;
     }
     cout << "Obstacle encountered! Backtracking from " << top->location << "..." << endl;
